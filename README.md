@@ -10,7 +10,7 @@ Read more [here](https://github.com/fmfn/BayesianOptimization), [here](http://ga
 
 The optimisation process is split in two phases:
 1. __exploration__: here we sample (at random for now, with some heuristic in the future) the 26-parameter hyperspace, our block-weights. The number of samples is set by the
-`--init_points` argument. We use each set of weigths to merge the two models and we use the merged model to generate `batch_size * number of payloads` images which are then scored.
+`--init_points` argument. We use each set of weigths to merge the two models and we use the merged model to generate `batch_count * batch_size * number of payloads` images which are then scored.
 2. __exploitation__: based on the exploratory phase, the optimiser makes an idea of where (i.e. which set of weights) the optimal merge is.
 This information is used to sample more set of weights `--n_iters` number of times. This time we don't sample all of them in one go. Instead we sample once, merge the models,
 generate and score the images and update the optimiser knowledge about the merging space. This way the optimiser can adapt the strategy step-by-step.
@@ -67,7 +67,8 @@ Usage: bayesian_merger.py [OPTIONS]
 Options:
   --url TEXT               where webui api is running, by default
                            http://127.0.0.1:7860
-  --batch_size INTEGER     number of images to generate for each payload
+  --batch_size INTEGER          number of images to generate for each batch
+  --batch_count INTEGER         number of batches to generate for each payload
   --model_a PATH           absolute path to first model  [required]
   --model_b PATH           absolute path to second model  [required]
   --device TEXT            where to merge models and score images, default and
@@ -106,7 +107,7 @@ expecially when generating lots of images. Hopefully, with this other method you
 - Why opinionated? Because we use webui API and lots of config files to run the show. No GUI. 
 Embrace your inner touch-typist and leave the browser for the CLI.
 - Why rely on webui? It's a very popular platform. Chances are that if you already have a working webui, you do not need to do much to run this library.
-- How many iterations and payloads? What about the batch size? I'd suggest `--init_points 10 --n_iters 10 --batch_size 10` and at least 5 different payloads.
+- How many iterations and payloads? What about the batch size? I'd suggest `--init_points 10 --n_iters 10 --batch_count 10` and at least 5 different payloads.
 Depending on your GPU this may take 2-3hrs to run on basic config.
 
 ## With the help of

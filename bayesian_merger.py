@@ -18,7 +18,13 @@ from sd_webui_bayesian_merger.artist import draw_unet
     "--batch_size",
     type=int,
     default=1,
-    help="number of images to generate for each payload",
+    help="number of images to generate for each batch",
+)
+@click.option(
+    "--batch_count",
+    type=int,
+    default=1,
+    help="number of batches to generate for each payload",
 )
 @click.option(
     "--model_a",

@@ -27,6 +27,7 @@ PathT = os.PathLike | str
 class BayesianOptimiser:
     url: str
     batch_size: int
+    batch_count: int
     model_a: PathT
     model_b: PathT
     device: str
@@ -38,7 +39,7 @@ class BayesianOptimiser:
     skip_position_ids: int
 
     def __post_init__(self):
-        self.generator = Generator(self.url, self.batch_size)
+        self.generator = Generator(self.url, self.batch_size, self.batch_count)
         self.merger = Merger(
             self.model_a,
             self.model_b,

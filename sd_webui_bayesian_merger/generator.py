@@ -13,6 +13,7 @@ from PIL import Image
 class Generator:
     url: str
     batch_size: int
+    batch_count: int
 
     def generate(self, payload: Dict) -> List[Image.Image]:
         r = requests.post(
@@ -24,13 +25,14 @@ class Generator:
         r_json = r.json()
         images = r_json["images"]
 
-        return [self.convert_image_to_pil(image) for image in images]
-
-    def convert_image_to_pil(self, image):
-        return Image.open(io.BytesIO(base64.b64decode(image.split(",", 1)[0])))
+        return [convert_image_to_pil(image) for image in images]
 
     def batch_generate(self, payload: Dict) -> List[Image.Image]:
-        return [image for image in self.generate(payload) for _ in range(self.batch_size)]
+        for k in ('batch_size', 'batch_count'):
+            if k not in payload:
+                payload[k] = getattr(self, k)
+
+        return self.generate(payload)
 
     def switch_model(self, ckpt: str) -> None:
         self.refresh_models()
@@ -65,3 +67,7 @@ class Generator:
                 return title
 
         raise ValueError(f"model {model_name} not found")
+
+
+def convert_image_to_pil(image):
+    return Image.open(io.BytesIO(base64.b64decode(image.split(",", 1)[0])))
