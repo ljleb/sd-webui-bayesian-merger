@@ -14,7 +14,7 @@ class Generator:
     url: str
     batch_size: int
 
-    def generate(self, payload: Dict) -> Image.Image:
+    def generate(self, payload: Dict) -> List[Image.Image]:
         r = requests.post(
             url=f"{self.url}/sdapi/v1/txt2img",
             json=payload,
@@ -22,12 +22,15 @@ class Generator:
         r.raise_for_status()
 
         r_json = r.json()
-        img = r_json["images"][0]
+        images = r_json["images"]
 
-        return Image.open(io.BytesIO(base64.b64decode(img.split(",", 1)[0])))
+        return [self.convert_image_to_pil(image) for image in images]
+
+    def convert_image_to_pil(self, image):
+        return Image.open(io.BytesIO(base64.b64decode(image.split(",", 1)[0])))
 
     def batch_generate(self, payload: Dict) -> List[Image.Image]:
-        return [self.generate(payload) for _ in range(self.batch_size)]
+        return [image for image in self.generate(payload) for _ in range(self.batch_size)]
 
     def switch_model(self, ckpt: str) -> None:
         self.refresh_models()
