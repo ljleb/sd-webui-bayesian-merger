@@ -45,7 +45,7 @@ def load_yaml(yaml_file: PathT) -> Dict:
         return yaml.safe_load(f)
 
 
-def check_payload(payload: Dict) -> Dict:
+def check_payload(payload: Dict, additional_defaults: Dict) -> Dict:
     if "prompt" not in payload:
         raise ValueError(f"{payload['path']} doesn't have a prompt")
 
@@ -69,10 +69,11 @@ def check_payload(payload: Dict) -> Dict:
 
 
 class Prompter:
-    def __init__(self, payloads_dir: str, wildcards_dir: str):
+    def __init__(self, payloads_dir: str, wildcards_dir: str, batch_size: str):
         self.find_payloads(payloads_dir)
         self.load_payloads()
         self.dealer = CardDealer(wildcards_dir)
+        self.batch_size = batch_size
 
     def find_payloads(self, payloads_dir: str) -> None:
         # TODO: allow for listing payloads instead of taking all of them
@@ -91,7 +92,7 @@ class Prompter:
     def load_payloads(self) -> None:
         for payload_name, payload in self.raw_payloads.items():
             raw_payload = load_yaml(payload["path"])
-            checked_payload = check_payload(raw_payload)
+            checked_payload = check_payload(raw_payload, {'batch_size': self.batch_size})
             self.raw_payloads[payload_name].update(checked_payload)
 
     def render_payloads(self) -> List[Dict]:

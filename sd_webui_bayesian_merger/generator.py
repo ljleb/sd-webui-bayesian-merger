@@ -12,14 +12,9 @@ from PIL import Image
 @dataclass
 class Generator:
     url: str
-    batch_size: int
     batch_count: int
 
     def generate(self, payload: Dict) -> List[Image.Image]:
-        payload = dict(payload)
-        if 'batch_size' not in payload:
-            payload['batch_size'] = self.batch_size
-
         r = requests.post(
             url=f"{self.url}/sdapi/v1/txt2img",
             json=payload,

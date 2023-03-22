@@ -39,7 +39,7 @@ class BayesianOptimiser:
     skip_position_ids: int
 
     def __post_init__(self):
-        self.generator = Generator(self.url, self.batch_size, self.batch_count)
+        self.generator = Generator(self.url, self.batch_count)
         self.merger = Merger(
             self.model_a,
             self.model_b,
@@ -47,7 +47,7 @@ class BayesianOptimiser:
             self.skip_position_ids,
         )
         self.scorer = Scorer(self.scorer_model_dir, self.device)
-        self.prompter = Prompter(self.payloads_dir, self.wildcards_dir)
+        self.prompter = Prompter(self.payloads_dir, self.wildcards_dir, self.batch_size)
         self.start_logging()
         self.iteration = 0
 

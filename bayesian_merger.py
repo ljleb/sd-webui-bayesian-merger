@@ -27,12 +27,6 @@ from sd_webui_bayesian_merger.artist import draw_unet
     help="number of batches to generate for each payload",
 )
 @click.option(
-    "--default",
-    type=str,
-    default="",
-    help="default value"
-)
-@click.option(
     "--model_a",
     type=click.Path(exists=True),
     required=True,
