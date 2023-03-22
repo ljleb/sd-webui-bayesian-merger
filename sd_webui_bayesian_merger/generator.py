@@ -16,6 +16,10 @@ class Generator:
     batch_count: int
 
     def generate(self, payload: Dict) -> List[Image.Image]:
+        payload = dict(payload)
+        if 'batch_size' not in payload:
+            payload['batch_size'] = self.batch_size
+
         r = requests.post(
             url=f"{self.url}/sdapi/v1/txt2img",
             json=payload,
@@ -28,11 +32,7 @@ class Generator:
         return [convert_image_to_pil(image) for image in images]
 
     def batch_generate(self, payload: Dict) -> List[Image.Image]:
-        for k in ('batch_size', 'batch_count'):
-            if k not in payload:
-                payload[k] = getattr(self, k)
-
-        return self.generate(payload)
+        return [image for _ in range(self.batch_count) for image in self.generate(payload)]
 
     def switch_model(self, ckpt: str) -> None:
         self.refresh_models()

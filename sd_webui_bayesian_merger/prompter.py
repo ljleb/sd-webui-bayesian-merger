@@ -51,26 +51,17 @@ def check_payload(payload: Dict) -> Dict:
 
     # set defaults
     # TODO: get default values from args
-    for k, v in zip(
-        [
-            "neg_prompt",
-            "seed",
-            "steps",
-            "cfg",
-            "width",
-            "height",
-            "sampler",
-        ],
-        [
-            "",
-            -1,
-            20,
-            7,
-            512,
-            512,
-            "Euler",
-        ],
-    ):
+    for k, v in {
+        "neg_prompt": "",
+        "seed": -1,
+        "steps": 20,
+        "cfg": 7,
+        "width": 512,
+        "height": 512,
+        "sampler": "Euler",
+        "batch_size": 1,
+        "batch_count": 1,
+    }.items():
         if k not in payload:
             payload[k] = v
 
